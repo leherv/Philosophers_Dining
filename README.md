@@ -1,6 +1,15 @@
 # Dining Philosophers
 This is a university exercise.
 
+## Usage
+### Start
+***dotnet run -p [numberOfPhilosophers] -t [maxThinkingTime] -e [maxEatingTime]***  
+both *t* and *e* are in milliseconds.
+### Stopping
+Just use ***Ctrl+c*** after starting the program.
+### Time Measurements
+Displayed after Stopping the Program.
+
 ## Subtask 1: A naive implementation:
 * Implemented in branch subtask1/naive-implementation
 
@@ -25,3 +34,18 @@ Why does the deadlock occur? Answer the following questions:
       p2 in turn can not pick up his second fork because p3 already picked it up. p2 is in waiting state, and so forth.
       Up to pn waiting for his second fork which is already held by p1 (p1`s first fork).
       
+Hint: use the following program arguments to produce a deadlock fast ***-p 2 -t 2 -e 2*** (having only 2 philosophers improves the probability of circular wait, while small t and e just execute faster)
+
+Prevent the deadlock by removing Circular Wait condition:  
+• Switch the order in which philosophers take the fork by using the following scheme: Odd philosophers start with the left fork, while even philosophers start with the right hand [6 points]. Make
+sure to use concurrency primitives correctly!
+
+• Does this strategy resolve the deadlock and why?
+   * Yes it resolves the deadlock as not all deadlock conditions are satisfied anymore (no circular wait is possible anymore).  
+
+• Measure the time spent in waiting for fork and compare it to the total runtime.
+   * See [Stopping](#stopping)
+
+• Can you think of other techniques for deadlock prevention?
+   * One could treat both forks as one resource and only hold them together as one resource as well which would eliminate **Hold and wait**
+   
