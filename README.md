@@ -1,6 +1,12 @@
 # Dining Philosophers
 This is a university exercise.
 
+## Subtask 1: A naive implementation:
+* Implemented in branch subtask1/naive-implementation
+
+## Subtask 2: Deadlock prevention
+* Implemented in main
+
 Why does the deadlock occur? Answer the following questions:
 
 1. What are the necessary conditions for deadlocks?
@@ -18,3 +24,4 @@ Why does the deadlock occur? Answer the following questions:
     * **Circular wait**: The deadlock occurs exactly when philosopher p1 takes his first fork and requests his second fork which was already picked up by philosopher p2 which sets p1 into waiting.
       p2 in turn can not pick up his second fork because p3 already picked it up. p2 is in waiting state, and so forth.
       Up to pn waiting for his second fork which is already held by p1 (p1`s first fork).
+      

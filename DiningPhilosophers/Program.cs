@@ -30,15 +30,18 @@ namespace DiningPhilosophers
                     Forks = InitializeForks(o.NumberPhilosophers);
 
                     var threads = Enumerable.Range(0, o.NumberPhilosophers)
-                        .Select(i => new Thread(() =>
-                            Dine(i, o.NumberPhilosophers, o.MaxThinkingTime, o.MaxEatingTime, cts.Token)))
+                        .Select(i => i % 2 == 0 
+                            ? (Index: i, firstFork: Forks.ElementAt((i + 1) % o.NumberPhilosophers), secondFork: Forks.ElementAt(i)) 
+                            : (Index: i, firstFork: Forks.ElementAt(i), secondFork: Forks.ElementAt((i + 1) % o.NumberPhilosophers)))
+                        .Select(tuple => new Thread(() =>
+                            Dine(tuple.Index, tuple.firstFork, tuple.secondFork, o.NumberPhilosophers, o.MaxThinkingTime, o.MaxEatingTime, cts.Token)))
                         .ToList();
                     threads.ForEach(t => t.Start());
                     threads.ForEach(t => t.Join());
                 });
         }
 
-        private static void Dine(int index, int maxCount, int maxThinkingTime, int maxEatingTime,
+        private static void Dine(int index, Fork firstFork, Fork secondFork, int maxCount, int maxThinkingTime, int maxEatingTime,
             CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
@@ -46,13 +49,12 @@ namespace DiningPhilosophers
                 var thinkingTime = RandomInRange(0, maxThinkingTime);
                 Thread.Sleep(thinkingTime);
                 Console.WriteLine($"Phil{index.ToString()} finished thinking");
-                lock (Forks.ElementAt(index))
+                lock (firstFork)
                 {
-                    Console.WriteLine($"Phil{index.ToString()} took first fork: {index.ToString()}");
-                    var indexSecondFork = (index + 1) % maxCount;
-                    lock (Forks.ElementAt(indexSecondFork))
+                    Console.WriteLine($"Phil{index.ToString()} took first fork: {firstFork.Position.ToString()}");
+                    lock (secondFork)
                     {
-                        Console.WriteLine($"Phil{index.ToString()} took second fork: {indexSecondFork.ToString()}");
+                        Console.WriteLine($"Phil{index.ToString()} took second fork: {secondFork.Position.ToString()}");
                         Thread.Sleep(RandomInRange(0, maxEatingTime));
                         Console.WriteLine($"Phil{index.ToString()} is done eating");
                     }
